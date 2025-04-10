@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz Results</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .quiz-container {
+      max-width: 600px;
+      margin: 50px auto;
+      /* Rudie Hartmann C22165 */
+      background: rgba(0, 0, 0, 0.6);
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+      color: white;
+    }
+    .results p {
+      margin: 10px 0;
+    }
+    .btn {
+      padding: 10px 20px;
+      background: teal;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    /* Ensure the back button is styled appropriately */
+    .back-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      text-decoration: none;
+      color: teal;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+    .back-button:hover {
+      background: rgba(0, 0, 0, 0.8);
+    }
+  </style>
+</head>
+<body>
+  
+    <a href="quiz.html" class="back-button">&#8592; Back</a>
+
+  <div class="quiz-container">
+    
+    <h2>✅ Quiz Completed!</h2>
+    <p id="scoreText"></p>
+    <div class="results" id="resultsContainer"></div>
+    <button onclick="retakeQuiz()" class="btn">🔁 Retake Quiz</button>
+  </div>
+  
+  <script>
+    const params = new URLSearchParams(window.location.search);
+
+    const inventorsQuiz = {
+      q1: { question: "Who invented the light bulb?", answer: "b" },
+      q2: { question: "Who invented the integrated circuit?", answer: "a" },
+      q3: { question: "What is Nikola Tesla best known for?", answer: "a" },
+      q4: { question: "Who co-founded Apple Inc.?", answer: "c" },
+      q5: { question: "Who created the Java programming language?", answer: "b" }
+    };
+
+    const inventionsQuiz = {
+      q1: { question: "What is a common use of smartwatches?", answer: "a" },
+      q2: { question: "Which device acts as the brain of electronics?", answer: "b" },
+      q3: { question: "Which feature is common in modern smartwatches?", answer: "a" },
+      q4: { question: "Which invention enabled the digital age?", answer: "a" },
+      q5: { question: "What invention replaced vacuum tubes?", answer: "b" }
+    };
+
+    // Auto-detect quiz type based on a known question answer key
+    const isInventors = params.get("q4") === "c" && params.get("q5") === "b";
+    const quizData = isInventors ? inventorsQuiz : inventionsQuiz;
+
+    let score = 0;
+    let output = "";
+
+    for (const key in quizData) {
+      const userAnswer = params.get(key);
+      const correctAnswer = quizData[key].answer;
+      const questionText = quizData[key].question;
+
+      if (userAnswer === correctAnswer) {
+        score++;
+        output += `<p><strong>${questionText}</strong><br>✅ Correct!</p>`;
+      } else if (userAnswer) {
+        output += `<p><strong>${questionText}</strong><br>❌ Incorrect.</p>`;
+      }
+    }
+
+    document.getElementById("scoreText").innerHTML = `Your score: <strong>${score}/${Object.keys(quizData).length}</strong>`;
+    document.getElementById("resultsContainer").innerHTML = output;
+
+    function retakeQuiz() {
+      const redirect = isInventors ? "quiz-inventors.html" : "quiz-inventions.html";
+      window.location.href = `${redirect}?refresh=${Date.now()}`;
+    }
+  </script>
+</body>
+</html>
